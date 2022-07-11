@@ -1,0 +1,1098 @@
+###
+POST http://localhost:4004/catalog/AssessmentRequests1
+Content-Type: application/json
+
+{
+    "ID": 1,
+    "supplieremail": "renuka.dimber@bristlecone.com"
+}
+
+####
+GET http://localhost:4004/catalog/Workflow
+###
+POST http://localhost:4004/catalog/Workflow
+Content-Type: application/json
+
+{
+      "project_ID": 2,
+      "workflow_ID": "123454"
+}
+###
+POST http://localhost:4004/catalog/AssessmentRequests
+Content-Type: application/json 
+
+{
+                "ProjectTitle": "Test123",
+                "Commodity_UniqueName": "10",
+                "Region_Region": "AND",
+                "Department_DepartmentID": "100",
+                "Supplier_erpVendorId": "1000",
+                "Deadline": "2022-12-12",
+                "QuestionnaireID": "A",
+                "RequestorID": "RD23",
+                "RequestorName": "Shubham Mane",
+                "ResponderUserType": "Internal",
+                "ResponderUserID": "d21c0696-9d93-fa7a-0e32-e80ab0e40ec3",
+                "ResponderUserName": "Renuka Dimber",
+                "ResponderEmail":"renuka.dimber@bristlecone.com",
+                "Project_Status": "Open"
+}
+###
+POST http://localhost:4004/catalog/AssessmentRequests
+Content-Type: application/json 
+
+{
+                "ProjectTitle": "Test123",
+                "Commodity_UniqueName": "11",
+                "Region_Region": "USA",
+                "Department_DepartmentID": "300",
+                "Supplier_erpVendorId": "1000",
+                "Deadline": "2022-12-12",
+                "QuestionnaireID": "Test",
+                "RequestorID": "d21c0696-9d93-fa7a-0e32-e80ab0e40ec3",
+                "RequestorName": "Renuka Dimber",
+                "ResponderUserType": "Internal",
+                "ResponderUserID": "d21c0696-9d93-fa7a-0e32-e80ab0e40ec3",
+                "ResponderUserName": "Renuka Dimber",
+                "ResponderEmail":"renuka.dimber@bcone.com",
+                "Project_Status": "Open"
+}
+###
+PATCH http://localhost:4004/catalog/AssessmentRequests(ID=157)
+Content-Type: application/json 
+
+{
+    "ProjectTitle" : "Test123",
+    "Project_Status": "OpenWithApprover"
+}
+###
+###
+POST http://localhost:4004/catalog/ApproverDetails
+Content-Type: application/json
+
+{
+    "ProjectID": 157,
+    "QuestionnaireID": "Test",
+    "UserID": "d21c0696-9d93-fa7a-0e32-e80ab0e40ec3",
+    "ApprovalStatus": "Closed"
+}
+
+
+###
+POST http://localhost:4004/catalog/ResponseDetails
+Content-Type: application/json
+
+{
+      "ProjectID": 72,
+      "ProjectTitle": "Test123",
+      "QuestionnaireID": "A01",
+      "QuestionID": "1",
+      "Question": "Question 1",
+      "AnswerID": "1",
+      "Response": "Test"
+    }
+###
+GET http://localhost:4004/catalog/ApproverDetails
+
+
+GET http://localhost:4004/catalog/AssessmentQuestionnaireTable?$filter=(Commodity_UniqueName eq '10' or Commodity_UniqueName eq '100') and Region_Region eq 'AND' 
+
+###
+POST http://localhost:4004/catalog/$batch
+Content-Type: application/json
+
+{
+    "requests": [
+        {
+            "id": "0",
+            "method": "POST",
+            "url": "/CommodityMasterTable",
+            "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+            "body": {
+                "Domain": "unspsc",
+                "UniqueName": "All",
+                "Name": "All commodities",
+                "ParentUniqueName": ""
+            }
+        }
+    ]
+}
+###
+
+GET http://localhost:4004/catalog/ResponseDetails
+###
+
+
+###
+POST http://localhost:4004/catalog/$batch
+Content-Type: application/json
+
+{
+    "requests": [
+        {
+            "id": "0",
+            "method": "POST",
+            "url": "/ResponseDetails",
+            "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+            "body": {
+                "ProjectID_ID": 1,
+                "ProjectTitle": "Project1",
+                "QuestionnaireID": "3",
+                "QuestionID": "1",
+                "Question": "Test Question 1",
+                "AnswerID": "1",
+                "Response": "Yes"
+            }
+        }
+    ]
+}
+###
+POST http://localhost:4004/catalog/$batch
+Content-Type: application/json
+
+{
+    "requests": [
+        {
+            "id": "0",
+      "method": "PUT",
+      "url": "/AssessmentQuestionnaireTable(QuestionnaireID='4',QuestionnaireName='Batch',QuestionID=1)",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "4",
+      "RiskControlID_ControlID": "ABC",
+      "QuestionnaireName": "Batch",
+      "Commodity_UniqueName": "100",
+      "Region_Region": "EMEA",
+      "Department_DepartmentID": "100",
+      "QuestionID": 1,
+      "Questions": "Test question 1",
+      "ScoringWeightage": 50
+      }
+        },
+        {
+            "id": "1",
+      "method": "PUT",
+      "url": "/AssessmentQuestionnaireTable(QuestionnaireID='4',QuestionnaireName='Batch',QuestionID=2)",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "4",
+      "RiskControlID_ControlID": "ABC",
+      "QuestionnaireName": "Batch",
+      "Commodity_UniqueName": "100",
+      "Region_Region": "EMEA",
+      "Department_DepartmentID": "100",
+      "QuestionID": 2,
+      "Questions": "Test question 2",
+      "ScoringWeightage": 30
+      }
+        },
+        {
+            "id": "2",
+      "method": "PUT",
+      "url": "/AssessmentQuestionnaireTable(QuestionnaireID='4',QuestionnaireName='Batch',QuestionID=3)",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "4",
+      "RiskControlID_ControlID": "ABC",
+      "QuestionnaireName": "Batch",
+      "Commodity_UniqueName": "100",
+      "Region_Region": "EMEA",
+      "Department_DepartmentID": "100",
+      "QuestionID": 3,
+      "Questions": "Test question 3",
+      "ScoringWeightage": 20
+      }
+        }
+    ]
+    }
+
+###
+POST http://localhost:4004/catalog/$batch
+Content-Type: application/json
+
+{
+    "requests": [
+        {
+            "id": "0",
+      "method": "PUT",
+      "url": "/AssessmentQuestionnaireTable(QuestionnaireID='4',QuestionnaireName='Batch',QuestionID=1)",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "AnswerID_AnswerID": 4,
+      "AnswerID_AnswerType": "Whole Number"
+      }
+        },
+        {
+            "id": "1",
+      "method": "PUT",
+      "url": "/AssessmentQuestionnaireTable(QuestionnaireID='4',QuestionnaireName='Batch',QuestionID=2)",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+            "AnswerID_AnswerID": 4,
+            "AnswerID_AnswerType": "Whole Number"
+      }
+        },
+        {
+            "id": "2",
+      "method": "PUT",
+      "url": "/AssessmentQuestionnaireTable(QuestionnaireID='4',QuestionnaireName='Batch',QuestionID=3)",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+            "AnswerID_AnswerID": 4,
+            "AnswerID_AnswerType": "Whole Number"
+      }
+        }
+    ]
+    }
+
+###
+###
+POST http://localhost:4004/catalog/$batch
+Content-Type: application/json
+
+{
+    "requests": [
+        {
+            "id": "0",
+      "method": "PUT",
+      "url": "/AssessmentQuestionnaireTable(QuestionnaireID='4',QuestionnaireName='Batch',QuestionID=1)",
+      "headers": { 
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+     "QuestionnaireID": "4",
+      "RiskControlID_ControlID": "ABC",
+      "QuestionnaireName": "Batch",
+      "Commodity_UniqueName": "100",
+      "Region_Region": "EMEA",
+      "Department_DepartmentID": "100",
+      "QuestionID": 1,
+      "Questions": "Test question 1",
+      "ScoringWeightage": 50,
+      "AnswerID_AnswerID": 4,
+      "AnswerID_AnswerType": "Whole Number"
+      }
+        },
+        {
+            "id": "1",
+      "method": "PUT",
+      "url": "/AssessmentQuestionnaireTable(QuestionnaireID='4',QuestionnaireName='Batch',QuestionID=2)",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "4",
+      "RiskControlID_ControlID": "ABC",
+      "QuestionnaireName": "Batch",
+      "Commodity_UniqueName": "100",
+      "Region_Region": "EMEA",
+      "Department_DepartmentID": "100",
+      "QuestionID": 2,
+      "Questions": "Test question 2",
+      "ScoringWeightage": 30,
+      "AnswerID_AnswerID": 4,
+      "AnswerID_AnswerType": "Whole Number"
+      }
+        },
+        {
+            "id": "2",
+      "method": "PUT",
+      "url": "/AssessmentQuestionnaireTable(QuestionnaireID='4',QuestionnaireName='Batch',QuestionID=3)",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "4",
+      "RiskControlID_ControlID": "ABC",
+      "QuestionnaireName": "Batch",
+      "Commodity_UniqueName": "100",
+      "Region_Region": "EMEA",
+      "Department_DepartmentID": "100",
+      "QuestionID": 3,
+      "Questions": "Test question 3",
+      "ScoringWeightage": 20,
+      "AnswerID_AnswerID": 4,
+      "AnswerID_AnswerType": "Whole Number"   
+      }
+        }
+    ]
+    }
+
+###
+
+###
+POST http://localhost:4004/catalog/$batch
+Content-Type: application/json
+
+{
+    "requests": [
+        {
+            "id": "0",
+      "method": "PATCH",
+      "url": "/AssessmentQuestionnaireTable(QuestionnaireID='4',QuestionnaireName='Batch',QuestionID=1)",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "AnswerID_AnswerID": 4,
+      "AnswerID_AnswerType": "Whole Number"
+      }
+        },
+        {
+            "id": "1",
+      "method": "PATCH",
+      "url": "/AssessmentQuestionnaireTable(QuestionnaireID='4',QuestionnaireName='Batch',QuestionID=2)",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+            "AnswerID_AnswerID": 4,
+            "AnswerID_AnswerType": "Whole Number"
+      }
+        },
+        {
+            "id": "2",
+      "method": "PATCH",
+      "url": "/AssessmentQuestionnaireTable(QuestionnaireID='4',QuestionnaireName='Batch',QuestionID=3)",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+            "AnswerID_AnswerID": 4,
+            "AnswerID_AnswerType": "Whole Number"
+      }
+        }
+    ]
+    }
+
+###
+###
+POST http://localhost:4004/catalog/AssessmentQuestionnaireTable
+Content-Type: application/json
+
+{
+      "QuestionnaireID": 4,
+      "RiskControlID_ControlID": "ABC",
+      "QuestionnaireName": "Questionnaire3",
+      "Commodity_UniqueName": "100",
+      "Region_Region": "EMEA",
+      "Department_DepartmentID": "100",
+      "QuestionID": 2,
+      "Questions": "Test question 2",
+      "ScoringWeightage": 50,
+      "AnswerID_AnswerID": 2,
+      "AnswerID_AnswerType": "Text Multi-line (up to 4000 length)"
+    }
+
+###
+GET http://localhost:4004/catalog/PublishedQuestionnaire
+
+###
+POST http://localhost:4004/catalog/PublishedQuestionnaire
+Content-Type: application/json
+
+{
+      "QuestionnaireID": "4",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+}
+
+###
+POST http://localhost:4004/catalog/$batch
+Content-Type: application/json
+
+{
+    "requests": [
+        {
+            "id": "0",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "21",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+      }
+        },
+         {
+            "id": "1",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "22",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+         }
+        },
+        {
+            "id": "2",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "23",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+         }
+        },
+        {
+            "id": "3",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "24",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+         }
+        },
+        {
+            "id": "4",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "25",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+         }
+        },
+        {
+            "id": "5",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "26",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+      }
+        },
+         {
+            "id": "6",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "27",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+         }
+        },
+        {
+            "id": "7",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "28",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+         }
+        },
+        {
+            "id": "8",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "29",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+         }
+        },
+        {
+            "id": "9",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "30",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+         }
+        },
+        {
+            "id": "10",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "31",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+      }
+        },
+         {
+            "id": "11",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "32",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+         }
+        },
+        {
+            "id": "12",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "33",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+         }
+        },
+        {
+            "id": "13",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "34",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+         }
+        },
+        {
+            "id": "14",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "35",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+         }
+        },
+        {
+            "id": "15",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "36",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+      }
+        },
+         {
+            "id": "16",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "37",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+         }
+        },
+        {
+            "id": "17",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "38",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+         }
+        },
+        {
+            "id": "18",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "39",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+         }
+        },
+        {
+            "id": "19",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "40",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+         }
+        },
+        {
+            "id": "20",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "41",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+      }
+        },
+         {
+            "id": "21",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "42",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+         }
+        },
+        {
+            "id": "22",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "43",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+         }
+        },
+        {
+            "id": "23",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "44",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+         }
+        },
+        {
+            "id": "24",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "45",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+         }
+        },
+        {
+            "id": "25",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "46",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+      }
+        },
+         {
+            "id": "26",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "47",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+         }
+        },
+        {
+            "id": "27",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "48",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+         }
+        },
+        {
+            "id": "28",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "49",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+         }
+        },
+        {
+            "id": "29",
+            "atomicityGroup": "group1",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "50",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+         }
+        },
+        {
+            "id": "30",
+            "atomicityGroup": "group1",
+      "method": "POST",
+      "url": "/PublishedQuestionnaire",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "54",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+         }
+        }
+
+    ]
+}
+
+###
+PUT http://localhost:4004/catalog/PublishedQuestionnaire(QuestionnaireID='6')
+Content-Type: application/json
+
+{
+      "QuestionnaireID": "6",
+      "Publish": "Yes"
+}
+
+###
+GET http://localhost:4004/catalog/QuestionnaireApprovalGroups
+
+###
+POST http://localhost:4004/catalog/QuestionnaireApprovalGroups
+Content-Type: application/json
+
+{
+      "QuestionnaireID_QuestionnaireID": 3,
+      "QuestionnaireName": "Questionnaire3",
+      "ApprovalGroup": "Group1",
+      "AllApprovalsRequired": "Yes"
+}
+
+###
+GET http://localhost:4004/catalog/CustomSelectAnswers
+
+###
+POST http://localhost:4004/catalog/CustomSelectAnswers
+Content-Type: application/json
+
+{
+    "QuestionnaireID_QuestionnaireID": 3,
+      "QuestionnaireID_QuestionnaireName": "Questionnaire3",
+      "QuestionnaireID_QuestionID": 2,
+      "AnswerID_AnswerID": 8,
+      "AnswerID_AnswerType": "Custom Multi-Picklist",
+      "Answer": "Option3"
+}
+
+###
+GET http://localhost:4004/catalog/AssessmentRequests
+
+###
+POST http://localhost:4004/catalog/AssessmentRequests
+Authorization: Basic Renuka:
+Content-Type: application/json
+
+
+{
+      "ProjectTitle": "ProjectABC",
+      "Commodity_UniqueName": "100",
+      "Region_Region": "EMEA",
+      "Department_DepartmentID": "100",
+      "Supplier_erpVendorId": "1000",
+      "Deadline": "2021-06-23",
+      "QuestionnaireID": "3",
+      "RequestorName": "abc",
+      "ResponderUserType": "Supplier",
+      "ResponderUserID": "abc",
+      "Project_Status": "Open"
+}
+
+###
+GET http://localhost:4004/catalog/ResponseDetails
+
+####
+POST http://localhost:4004/catalog/ResponseDetails
+Content-Type: application/json
+
+{
+      "ProjectID_ID": 1,
+      "ProjectTitle": "Project1",
+      "QuestionnaireID": "3",
+      "Question": "Question1",
+      "AnswerType": "Custom Multi-Picklist",
+      "Response": "Yes"
+}
+###
+GET http://localhost:4004/catalog/ProjectApprovalGroupParticipants
+
+###
+GET http://localhost:4004/catalog/ApproverDetails
+###
+POST http://localhost:4004/catalog/ApproverDetails
+Content-Type:application/json
+
+{
+    "ProjectID_ID": 4,
+    "QuestionnaireID": "3",
+    "ApprovalGroup": "Group1",
+    "UserID": "RD23",
+    "UserMail": "renuka.dimber@bcone.com",
+    "ApprovalStatus" : "Closed"
+}
+
+###
+GET http://localhost:4004/catalog/ApproverGrading
+###
+POST http://localhost:4004/catalog/ApproverGrading
+Content-Type: application/json
+
+{
+      "ProjectID_ID": 2,
+      "QuestionnaireID": "3",
+      "QuestionID": "1",
+      "Question": "Test Question 1",
+      "AnswerType": "Custom Multi-Picklist",
+      "Response": "Yes",
+      "ApproverID": "RenukaD",
+      "Grade": 40
+}
+
+###
+GET http://localhost:4004/catalog/PublishedQuestionnaire
+###
+GET http://localhost:4004/catalog/submitpublishquestionnaire(QuestionnaireID='10',QuestionnaireName='Test',Publish='True')
+
+###
+GET http://localhost:4004/catalog/submitpublishquestionnaire({"payloaddata":[{"QuestionnaireID":"10","QuestionnaireName":"Test","Publish":"True"},{"QuestionnaireID":"11","QuestionnaireName":"Test","Publish":"True"}]})\
+
+###
+POST http://localhost:4004/catalog/$batch
+Content-Type: application/json
+
+{
+    "requests": [
+        {
+            "id": "0",
+      "method": "PUT",
+      "url": "/PublishedQuestionnaire(QuestionnaireID='10')",
+      "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+      "body": {
+      "QuestionnaireID": "10",
+      "QuestionnaireName": "Questionnaire3",
+      "Publish": "Yes"
+      }
+        }
+    ]
+}
+
+####
+POST http://localhost:4004/catalog/$batch
+Content-Type: application/json
+
+{
+    "requests": [
+        {
+            "id": "0",
+            "method": "POST",
+            "url": "/RegionMasterTable",
+            "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+            "body": {
+                	"Region": "Test1",
+    			    "Description": "Alberta",
+    			    "ParentRegion": "CAN"
+            }
+        }
+    ]
+}
+
+###
+POST http://localhost:4004/catalog/$batch
+Content-Type: application/json
+
+{
+    "requests": [
+        {
+            "id": "0",
+            "method": "POST",
+            "url": "/DepartmentMasterTable",
+            "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+            "body": {
+                	"DepartmentID": "Test1",
+    			    "Description": "Sales",
+    			    "ParentDepartment": "All"
+            }
+        }
+    ]
+}
+    
+
+###
+POST http://localhost:4004/catalog/$batch
+Content-Type: application/json
+
+{
+    "requests": [
+        {
+            "id": "0",
+            "method": "POST",
+            "url": "/RiskControlMasterTable",
+            "headers": {
+                "content-type": "application/json",
+                "odata-version": "4.0"
+            },
+            "body": {
+                "AssessmentIDs": "Anti-bribery Corruption",
+    			"ContractClauseImpact": "No",
+   			    "ControlDescriptionMLS": null,
+    			"ControlID": "Test1",
+    			"ControlName": "Anti-bribery Corruption",
+    			"ControlOwner": "ABC Risk Owner",
+    			"ControlOwnerType": "Group",
+    			"ControlType": "Engagement",
+    			"DecisionMaker": "ABC Risk Owner",
+    			"DecisionMakerType": "Group",
+    			"RegulatorMandated": "No",
+    			"RiskType": "Anti-bribery & Corruption"
+            }
+        }
+    ]
+}
+
+###

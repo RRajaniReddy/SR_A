@@ -1,0 +1,4063 @@
+{
+  "namespace": "my.Views",
+  "definitions": {
+    "my.Views.ProjectApprovalGroupParticipants": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "join": "inner",
+            "args": [
+              {
+                "join": "inner",
+                "args": [
+                  {
+                    "ref": [
+                      "my.Survey.QuestionnaireApprovalGroups"
+                    ]
+                  },
+                  {
+                    "ref": [
+                      "my.Survey.ApprovalGroupParticipants"
+                    ]
+                  }
+                ],
+                "on": [
+                  {
+                    "ref": [
+                      "QuestionnaireApprovalGroups",
+                      "ApprovalGroup"
+                    ]
+                  },
+                  "=",
+                  {
+                    "ref": [
+                      "ApprovalGroupParticipants",
+                      "ApprovalGroup"
+                    ]
+                  }
+                ]
+              },
+              {
+                "ref": [
+                  "my.Survey.AssessmentRequests"
+                ]
+              }
+            ],
+            "on": [
+              {
+                "ref": [
+                  "QuestionnaireApprovalGroups",
+                  "QuestionnaireID"
+                ]
+              },
+              "=",
+              {
+                "ref": [
+                  "AssessmentRequests",
+                  "QuestionnaireID"
+                ]
+              }
+            ]
+          },
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "AssessmentRequests",
+                "ID"
+              ]
+            },
+            {
+              "key": true,
+              "ref": [
+                "AssessmentRequests",
+                "QuestionnaireID"
+              ]
+            },
+            {
+              "key": true,
+              "ref": [
+                "ApprovalGroupParticipants",
+                "ApprovalGroup"
+              ]
+            },
+            {
+              "ref": [
+                "ApprovalGroupParticipants",
+                "UserID"
+              ]
+            },
+            {
+              "ref": [
+                "ApprovalGroupParticipants",
+                "UserMail"
+              ]
+            }
+          ]
+        }
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.Integer"
+        },
+        "QuestionnaireID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "ApprovalGroup": {
+          "@Core.Computed": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 100
+        },
+        "UserID": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "UserMail": {
+          "type": "cds.String",
+          "length": 100
+        }
+      }
+    },
+    "my.Views.Graders": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "join": "left",
+            "args": [
+              {
+                "ref": [
+                  "my.Views.ProjectApprovalGroupParticipants"
+                ]
+              },
+              {
+                "ref": [
+                  "my.Survey.InternalUserMasterTable"
+                ]
+              }
+            ],
+            "on": [
+              {
+                "ref": [
+                  "ProjectApprovalGroupParticipants",
+                  "UserID"
+                ]
+              },
+              "=",
+              {
+                "ref": [
+                  "InternalUserMasterTable",
+                  "LoginID"
+                ]
+              }
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "ID"
+              ]
+            },
+            {
+              "ref": [
+                "LoginID"
+              ]
+            },
+            {
+              "ref": [
+                "UserMail"
+              ]
+            },
+            {
+              "ref": [
+                "firstName"
+              ]
+            },
+            {
+              "ref": [
+                "lastName"
+              ]
+            }
+          ]
+        }
+      },
+      "elements": {
+        "ID": {
+          "type": "cds.Integer"
+        },
+        "LoginID": {
+          "@Core.Computed": true,
+          "type": "cds.String",
+          "length": 100
+        },
+        "UserMail": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "firstName": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "lastName": {
+          "type": "cds.String",
+          "length": 100
+        }
+      }
+    },
+    "my.Views.ApproverStatus": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "join": "full",
+            "args": [
+              {
+                "ref": [
+                  "my.Views.ProjectApprovalGroupParticipants"
+                ]
+              },
+              {
+                "ref": [
+                  "my.Survey.ApproverDetails"
+                ]
+              }
+            ],
+            "on": [
+              {
+                "ref": [
+                  "ProjectApprovalGroupParticipants",
+                  "ID"
+                ]
+              },
+              "=",
+              {
+                "ref": [
+                  "ApproverDetails",
+                  "ProjectID"
+                ]
+              },
+              "and",
+              {
+                "ref": [
+                  "ProjectApprovalGroupParticipants",
+                  "UserID"
+                ]
+              },
+              "=",
+              {
+                "ref": [
+                  "ApproverDetails",
+                  "UserID"
+                ]
+              }
+            ]
+          },
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "ID"
+              ]
+            },
+            {
+              "key": true,
+              "ref": [
+                "ProjectApprovalGroupParticipants",
+                "UserID"
+              ]
+            },
+            {
+              "xpr": [
+                "case",
+                "when",
+                {
+                  "ref": [
+                    "ApproverDetails",
+                    "ApprovalStatus"
+                  ]
+                },
+                "is",
+                "not",
+                "null",
+                "then",
+                {
+                  "ref": [
+                    "ApproverDetails",
+                    "ApprovalStatus"
+                  ]
+                },
+                "else",
+                {
+                  "val": "Open"
+                },
+                "end"
+              ],
+              "as": "Status",
+              "cast": {
+                "type": "cds.String"
+              }
+            }
+          ]
+        }
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.Integer"
+        },
+        "UserID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 100
+        },
+        "Status": {
+          "@Core.Computed": true,
+          "type": "cds.String"
+        }
+      }
+    },
+    "my.Views.ProjectStatus": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "my.Views.ApproverStatus"
+            ]
+          },
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "ID"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Status"
+              ]
+            },
+            "=",
+            {
+              "val": "Closed"
+            }
+          ]
+        }
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.Integer"
+        }
+      }
+    },
+    "my.Views.ApprovalGroups": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "my.Survey.ApprovalGroupParticipants"
+            ]
+          },
+          "distinct": true,
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "ApprovalGroup"
+              ]
+            }
+          ]
+        }
+      },
+      "elements": {
+        "ApprovalGroup": {
+          "@Core.Computed": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 100
+        }
+      }
+    },
+    "my.Views.PublishedQuestionnaireID": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "my.Survey.QuestionnaireApprovalGroups"
+            ]
+          },
+          "distinct": true,
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "QuestionnaireID"
+              ]
+            }
+          ]
+        }
+      },
+      "elements": {
+        "QuestionnaireID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        }
+      }
+    },
+    "my.Views.Grading": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "join": "left",
+            "args": [
+              {
+                "ref": [
+                  "my.Survey.ApproverGrading"
+                ]
+              },
+              {
+                "ref": [
+                  "my.Survey.AssessmentQuestionnaireTable"
+                ]
+              }
+            ],
+            "on": [
+              {
+                "ref": [
+                  "ApproverGrading",
+                  "QuestionnaireID"
+                ]
+              },
+              "=",
+              {
+                "ref": [
+                  "AssessmentQuestionnaireTable",
+                  "QuestionnaireID"
+                ]
+              },
+              "and",
+              {
+                "ref": [
+                  "ApproverGrading",
+                  "QuestionID"
+                ]
+              },
+              "=",
+              {
+                "ref": [
+                  "AssessmentQuestionnaireTable",
+                  "QuestionID"
+                ]
+              }
+            ]
+          },
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "ApproverGrading",
+                "ProjectID"
+              ]
+            },
+            {
+              "ref": [
+                "ApproverGrading",
+                "QuestionnaireID"
+              ]
+            },
+            {
+              "ref": [
+                "ApproverGrading",
+                "QuestionID"
+              ]
+            },
+            {
+              "ref": [
+                "ApproverGrading",
+                "Question"
+              ]
+            },
+            {
+              "ref": [
+                "ApproverGrading",
+                "AnswerID"
+              ]
+            },
+            {
+              "ref": [
+                "ApproverGrading",
+                "Response"
+              ]
+            },
+            {
+              "ref": [
+                "ApproverGrading",
+                "Grade"
+              ]
+            },
+            {
+              "ref": [
+                "ApproverGrading",
+                "ApproverID"
+              ]
+            },
+            {
+              "ref": [
+                "AssessmentQuestionnaireTable",
+                "ScoringWeightage"
+              ]
+            },
+            {
+              "xpr": [
+                {
+                  "ref": [
+                    "Grade"
+                  ]
+                },
+                "*",
+                {
+                  "ref": [
+                    "ScoringWeightage"
+                  ]
+                }
+              ],
+              "as": "Multiplication",
+              "cast": {
+                "type": "cds.Integer"
+              }
+            }
+          ]
+        }
+      },
+      "elements": {
+        "ProjectID": {
+          "key": true,
+          "type": "cds.Integer"
+        },
+        "QuestionnaireID": {
+          "type": "cds.String",
+          "length": 50
+        },
+        "QuestionID": {
+          "type": "cds.String",
+          "length": 50
+        },
+        "Question": {
+          "type": "cds.String",
+          "length": 50
+        },
+        "AnswerID": {
+          "type": "cds.String"
+        },
+        "Response": {
+          "type": "cds.String",
+          "length": 500
+        },
+        "Grade": {
+          "type": "cds.Integer"
+        },
+        "ApproverID": {
+          "type": "cds.String",
+          "length": 50
+        },
+        "ScoringWeightage": {
+          "type": "cds.Integer",
+          "notNull": true
+        },
+        "Multiplication": {
+          "@Core.Computed": true,
+          "type": "cds.Integer"
+        }
+      }
+    },
+    "my.Views.ApproverFinalGradingScore": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "my.Views.Grading"
+            ]
+          },
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "ProjectID"
+              ]
+            },
+            {
+              "ref": [
+                "ApproverID"
+              ]
+            },
+            {
+              "xpr": [
+                {
+                  "xpr": [
+                    {
+                      "func": "Sum",
+                      "args": [
+                        {
+                          "ref": [
+                            "Multiplication"
+                          ]
+                        }
+                      ]
+                    },
+                    "/",
+                    {
+                      "func": "Sum",
+                      "args": [
+                        {
+                          "ref": [
+                            "ScoringWeightage"
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "cast": {
+                    "type": "cds.Integer"
+                  }
+                }
+              ],
+              "as": "Score",
+              "cast": {
+                "type": "cds.Integer"
+              }
+            }
+          ],
+          "groupBy": [
+            {
+              "ref": [
+                "ProjectID"
+              ]
+            },
+            {
+              "ref": [
+                "ApproverID"
+              ]
+            }
+          ]
+        }
+      },
+      "elements": {
+        "ProjectID": {
+          "key": true,
+          "type": "cds.Integer"
+        },
+        "ApproverID": {
+          "type": "cds.String",
+          "length": 50
+        },
+        "Score": {
+          "@Core.Computed": true,
+          "type": "cds.Integer"
+        }
+      }
+    },
+    "my.Views.ProjectFinalGradingScore": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "my.Views.Grading"
+            ]
+          },
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "ProjectID"
+              ]
+            },
+            {
+              "xpr": [
+                {
+                  "xpr": [
+                    {
+                      "func": "Sum",
+                      "args": [
+                        {
+                          "ref": [
+                            "Multiplication"
+                          ]
+                        }
+                      ]
+                    },
+                    "/",
+                    {
+                      "func": "Sum",
+                      "args": [
+                        {
+                          "ref": [
+                            "ScoringWeightage"
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "cast": {
+                    "type": "cds.Integer"
+                  }
+                }
+              ],
+              "as": "FinalScore",
+              "cast": {
+                "type": "cds.Integer"
+              }
+            }
+          ],
+          "groupBy": [
+            {
+              "ref": [
+                "ProjectID"
+              ]
+            }
+          ]
+        }
+      },
+      "elements": {
+        "ProjectID": {
+          "key": true,
+          "type": "cds.Integer"
+        },
+        "FinalScore": {
+          "@Core.Computed": true,
+          "type": "cds.Integer"
+        }
+      }
+    },
+    "my.Views.OpenAssessmentRequest": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "my.Views.ApproverStatus"
+            ]
+          },
+          "distinct": true,
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "ID"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Status"
+              ]
+            },
+            "=",
+            {
+              "val": "Open"
+            }
+          ]
+        }
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.Integer"
+        }
+      }
+    },
+    "my.Views.OOTBReport": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "join": "left",
+            "args": [
+              {
+                "join": "inner",
+                "args": [
+                  {
+                    "ref": [
+                      "my.Survey.AssessmentRequests"
+                    ]
+                  },
+                  {
+                    "ref": [
+                      "my.Views.ProjectFinalGradingScore"
+                    ]
+                  }
+                ],
+                "on": [
+                  {
+                    "ref": [
+                      "AssessmentRequests",
+                      "ID"
+                    ]
+                  },
+                  "=",
+                  {
+                    "ref": [
+                      "ProjectFinalGradingScore",
+                      "ProjectID"
+                    ]
+                  }
+                ]
+              },
+              {
+                "ref": [
+                  "my.Views.OpenAssessmentRequest"
+                ]
+              }
+            ],
+            "on": [
+              {
+                "ref": [
+                  "AssessmentRequests",
+                  "ID"
+                ]
+              },
+              "=",
+              {
+                "ref": [
+                  "OpenAssessmentRequest",
+                  "ID"
+                ]
+              }
+            ]
+          },
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "AssessmentRequests",
+                "ID"
+              ],
+              "as": "ProjectID"
+            },
+            {
+              "ref": [
+                "AssessmentRequests",
+                "ProjectTitle"
+              ]
+            },
+            {
+              "ref": [
+                "AssessmentRequests",
+                "RequestorName"
+              ]
+            },
+            {
+              "ref": [
+                "AssessmentRequests",
+                "Supplier"
+              ],
+              "as": "SupplierName"
+            },
+            {
+              "ref": [
+                "AssessmentRequests",
+                "Deadline"
+              ],
+              "as": "Date"
+            },
+            {
+              "ref": [
+                "AssessmentRequests",
+                "Commodity"
+              ],
+              "as": "Category"
+            },
+            {
+              "ref": [
+                "AssessmentRequests",
+                "Region"
+              ]
+            },
+            {
+              "ref": [
+                "AssessmentRequests",
+                "Department"
+              ]
+            },
+            {
+              "val": "RiskControl",
+              "as": "RiskControl",
+              "cast": {
+                "type": "cds.String"
+              }
+            },
+            {
+              "ref": [
+                "ProjectFinalGradingScore",
+                "FinalScore"
+              ],
+              "as": "RiskControlScore"
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "AssessmentRequests",
+                "Project_Status"
+              ]
+            },
+            "=",
+            {
+              "val": "Closed"
+            },
+            "and",
+            {
+              "ref": [
+                "OpenAssessmentRequest",
+                "ID"
+              ]
+            },
+            "is",
+            "null"
+          ]
+        }
+      },
+      "elements": {
+        "ProjectID": {
+          "key": true,
+          "type": "cds.Integer"
+        },
+        "ProjectTitle": {
+          "type": "cds.String",
+          "length": 100,
+          "notNull": true
+        },
+        "RequestorName": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "SupplierName": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "my.Survey.SupplierUserMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "erpVendorId"
+              ]
+            }
+          ]
+        },
+        "Date": {
+          "type": "cds.Date"
+        },
+        "Category": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "my.Survey.CommodityMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "UniqueName"
+              ]
+            }
+          ]
+        },
+        "Region": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "my.Survey.RegionMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "Region"
+              ]
+            }
+          ]
+        },
+        "Department": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "my.Survey.DepartmentMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "DepartmentID"
+              ]
+            }
+          ]
+        },
+        "RiskControl": {
+          "@Core.Computed": true,
+          "type": "cds.String"
+        },
+        "RiskControlScore": {
+          "@Core.Computed": true,
+          "type": "cds.Integer"
+        }
+      }
+    },
+    "my.Views.QuestionnaireID": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "join": "inner",
+            "args": [
+              {
+                "ref": [
+                  "my.Views.PublishedQuestionnaireID"
+                ]
+              },
+              {
+                "ref": [
+                  "my.Survey.AssessmentQuestionnaireTable"
+                ]
+              }
+            ],
+            "on": [
+              {
+                "ref": [
+                  "PublishedQuestionnaireID",
+                  "QuestionnaireID"
+                ]
+              },
+              "=",
+              {
+                "ref": [
+                  "AssessmentQuestionnaireTable",
+                  "QuestionnaireID"
+                ]
+              }
+            ]
+          },
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "PublishedQuestionnaireID",
+                "QuestionnaireID"
+              ]
+            },
+            {
+              "ref": [
+                "AssessmentQuestionnaireTable",
+                "Commodity"
+              ],
+              "as": "Commodity"
+            },
+            {
+              "ref": [
+                "AssessmentQuestionnaireTable",
+                "Region"
+              ],
+              "as": "Region"
+            },
+            {
+              "ref": [
+                "AssessmentQuestionnaireTable",
+                "Department"
+              ],
+              "as": "Department"
+            },
+            {
+              "ref": [
+                "AssessmentQuestionnaireTable",
+                "QuestionID"
+              ]
+            },
+            {
+              "ref": [
+                "AssessmentQuestionnaireTable",
+                "Questions"
+              ]
+            }
+          ]
+        }
+      },
+      "elements": {
+        "QuestionnaireID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "Commodity": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "my.Survey.CommodityMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "UniqueName"
+              ]
+            }
+          ]
+        },
+        "Region": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "my.Survey.RegionMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "Region"
+              ]
+            }
+          ]
+        },
+        "Department": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "my.Survey.DepartmentMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "DepartmentID"
+              ]
+            }
+          ]
+        },
+        "QuestionID": {
+          "type": "cds.String",
+          "length": 50
+        },
+        "Questions": {
+          "type": "cds.String",
+          "length": 500,
+          "notNull": true
+        }
+      }
+    },
+    "my.Views.FinalQuestionnaireID": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "my.Views.QuestionnaireID"
+            ]
+          },
+          "distinct": true,
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "QuestionnaireID"
+              ]
+            },
+            {
+              "ref": [
+                "Commodity"
+              ]
+            },
+            {
+              "ref": [
+                "Region"
+              ]
+            },
+            {
+              "ref": [
+                "Department"
+              ]
+            }
+          ]
+        }
+      },
+      "elements": {
+        "QuestionnaireID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "Commodity": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "my.Survey.CommodityMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "UniqueName"
+              ]
+            }
+          ]
+        },
+        "Region": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "my.Survey.RegionMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "Region"
+              ]
+            }
+          ]
+        },
+        "Department": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "my.Survey.DepartmentMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "DepartmentID"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "my.Views.AssessmentRequestStatus": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "join": "full",
+            "args": [
+              {
+                "ref": [
+                  "my.Survey.AssessmentRequests"
+                ]
+              },
+              {
+                "ref": [
+                  "my.Views.ApproverStatus"
+                ]
+              }
+            ],
+            "on": [
+              {
+                "ref": [
+                  "AssessmentRequests",
+                  "ID"
+                ]
+              },
+              "=",
+              {
+                "ref": [
+                  "ApproverStatus",
+                  "ID"
+                ]
+              }
+            ]
+          },
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "AssessmentRequests",
+                "ID"
+              ],
+              "as": "ID"
+            },
+            {
+              "key": true,
+              "ref": [
+                "ProjectTitle"
+              ]
+            },
+            {
+              "ref": [
+                "UserID"
+              ]
+            },
+            {
+              "ref": [
+                "Commodity"
+              ]
+            },
+            {
+              "ref": [
+                "Department"
+              ]
+            },
+            {
+              "ref": [
+                "Deadline"
+              ]
+            },
+            {
+              "ref": [
+                "QuestionnaireID"
+              ]
+            },
+            {
+              "ref": [
+                "Region"
+              ]
+            },
+            {
+              "ref": [
+                "RequestorName"
+              ]
+            },
+            {
+              "ref": [
+                "ResponderUserID"
+              ]
+            },
+            {
+              "ref": [
+                "ResponderUserType"
+              ]
+            },
+            {
+              "ref": [
+                "Supplier"
+              ]
+            },
+            {
+              "ref": [
+                "ApproverStatus",
+                "Status"
+              ],
+              "as": "Project_Status"
+            }
+          ]
+        }
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.Integer"
+        },
+        "ProjectTitle": {
+          "key": true,
+          "type": "cds.String",
+          "length": 100,
+          "notNull": true
+        },
+        "UserID": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "Commodity": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "my.Survey.CommodityMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "UniqueName"
+              ]
+            }
+          ]
+        },
+        "Department": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "my.Survey.DepartmentMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "DepartmentID"
+              ]
+            }
+          ]
+        },
+        "Deadline": {
+          "type": "cds.Date"
+        },
+        "QuestionnaireID": {
+          "type": "cds.String",
+          "length": 50
+        },
+        "Region": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "my.Survey.RegionMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "Region"
+              ]
+            }
+          ]
+        },
+        "RequestorName": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "ResponderUserID": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "ResponderUserType": {
+          "@assert.range": true,
+          "type": "my.Survey.AssessmentRequests.ResponderUserType",
+          "length": 10
+        },
+        "Supplier": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "my.Survey.SupplierUserMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "erpVendorId"
+              ]
+            }
+          ]
+        },
+        "Project_Status": {
+          "@Core.Computed": true,
+          "type": "cds.String"
+        }
+      }
+    },
+    "my.Views.UserDetails": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "my.Survey.InternalUserMasterTable"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "LoginID"
+              ]
+            },
+            {
+              "func": "concat",
+              "args": [
+                {
+                  "func": "concat",
+                  "args": [
+                    {
+                      "ref": [
+                        "firstName"
+                      ]
+                    },
+                    {
+                      "val": " "
+                    }
+                  ]
+                },
+                {
+                  "ref": [
+                    "lastName"
+                  ]
+                }
+              ],
+              "as": "fullName",
+              "cast": {
+                "type": "cds.String"
+              }
+            },
+            {
+              "ref": [
+                "InternalUserMasterTable",
+                "UserType"
+              ]
+            },
+            {
+              "ref": [
+                "creationDate"
+              ]
+            },
+            {
+              "ref": [
+                "emailAddress"
+              ]
+            },
+            {
+              "ref": [
+                "phone"
+              ]
+            },
+            {
+              "ref": [
+                "departmentId"
+              ]
+            },
+            {
+              "ref": [
+                "position"
+              ]
+            },
+            {
+              "ref": [
+                "SupplierID"
+              ]
+            }
+          ]
+        }
+      },
+      "elements": {
+        "LoginID": {
+          "@Core.Computed": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 100
+        },
+        "fullName": {
+          "@Core.Computed": true,
+          "type": "cds.String"
+        },
+        "UserType": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "creationDate": {
+          "type": "cds.Date"
+        },
+        "emailAddress": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "phone": {
+          "type": "cds.String",
+          "length": 15
+        },
+        "departmentId": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "position": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "SupplierID": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "my.Survey.SupplierUserMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "erpVendorId"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "my.Survey.Workflow": {
+      "kind": "entity",
+      "elements": {
+        "project_ID": {
+          "key": true,
+          "type": "cds.Integer"
+        },
+        "workflow_ID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        }
+      }
+    },
+    "my.Survey.RegionMasterTable": {
+      "kind": "entity",
+      "elements": {
+        "Region": {
+          "@Core.Computed": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "Description": {
+          "type": "cds.String",
+          "length": 510,
+          "notNull": true
+        },
+        "ParentRegion": {
+          "type": "cds.String",
+          "length": 50
+        }
+      }
+    },
+    "my.Survey.Parent_Region": {
+      "kind": "entity",
+      "elements": {
+        "ParentRegion": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        }
+      }
+    },
+    "my.Survey.DepartmentMasterTable": {
+      "kind": "entity",
+      "elements": {
+        "DepartmentID": {
+          "@Core.Computed": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "Description": {
+          "type": "cds.String",
+          "length": 510,
+          "notNull": true
+        },
+        "ParentDepartment": {
+          "type": "cds.String",
+          "length": 50
+        }
+      }
+    },
+    "my.Survey.Parent_Department": {
+      "kind": "entity",
+      "elements": {
+        "ParentDepartment": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        }
+      }
+    },
+    "my.Survey.CommodityMasterTable": {
+      "kind": "entity",
+      "elements": {
+        "Domain": {
+          "type": "cds.String",
+          "length": 50,
+          "notNull": true
+        },
+        "UniqueName": {
+          "key": true,
+          "type": "cds.String",
+          "length": 100
+        },
+        "Name": {
+          "type": "cds.String",
+          "length": 255,
+          "notNull": true
+        },
+        "ParentUniqueName": {
+          "type": "cds.String",
+          "length": 100
+        }
+      }
+    },
+    "my.Survey.Parent_Commodity": {
+      "kind": "entity",
+      "elements": {
+        "ParentUniqueName": {
+          "key": true,
+          "type": "cds.String",
+          "length": 100
+        }
+      }
+    },
+    "my.Survey.RiskControlMasterTable": {
+      "kind": "entity",
+      "elements": {
+        "AssessmentIDs": {
+          "type": "cds.String",
+          "length": 100,
+          "notNull": true
+        },
+        "ContractClauseImpact": {
+          "type": "cds.String",
+          "length": 100,
+          "notNull": true
+        },
+        "ControlDescriptionMLS": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "ControlID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 100
+        },
+        "ControlName": {
+          "type": "cds.String",
+          "length": 100,
+          "notNull": true
+        },
+        "ControlOwner": {
+          "type": "cds.String",
+          "length": 100,
+          "notNull": true
+        },
+        "ControlOwnerType": {
+          "type": "cds.String",
+          "length": 100,
+          "notNull": true
+        },
+        "ControlType": {
+          "type": "cds.String",
+          "length": 100,
+          "notNull": true
+        },
+        "DecisionMaker": {
+          "type": "cds.String",
+          "length": 100,
+          "notNull": true
+        },
+        "DecisionMakerType": {
+          "type": "cds.String",
+          "length": 100,
+          "notNull": true
+        },
+        "RegulatorMandated": {
+          "type": "cds.String",
+          "length": 100,
+          "notNull": true
+        },
+        "RiskType": {
+          "type": "cds.String",
+          "length": 100,
+          "notNull": true
+        }
+      }
+    },
+    "my.Survey.AssessmentQuestionnaireTable": {
+      "kind": "entity",
+      "elements": {
+        "QuestionnaireID": {
+          "@Core.Computed": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "RiskControlID": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "my.Survey.RiskControlMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "ControlID"
+              ]
+            }
+          ]
+        },
+        "QuestionnaireName": {
+          "key": true,
+          "type": "cds.String",
+          "length": 55
+        },
+        "QuestionID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "Commodity": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "my.Survey.CommodityMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "UniqueName"
+              ]
+            }
+          ]
+        },
+        "Region": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "my.Survey.RegionMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "Region"
+              ]
+            }
+          ]
+        },
+        "Department": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "my.Survey.DepartmentMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "DepartmentID"
+              ]
+            }
+          ]
+        },
+        "Questions": {
+          "type": "cds.String",
+          "length": 500,
+          "notNull": true
+        },
+        "ScoringWeightage": {
+          "type": "cds.Integer",
+          "notNull": true
+        },
+        "AnswerID": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "my.Survey.AnswerTypeMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "AnswerID"
+              ]
+            },
+            {
+              "ref": [
+                "AnswerType"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "my.Survey.AnswerTypeMasterTable": {
+      "kind": "entity",
+      "elements": {
+        "AnswerID": {
+          "@Core.Computed": true,
+          "key": true,
+          "type": "cds.String"
+        },
+        "AnswerType": {
+          "key": true,
+          "type": "cds.String",
+          "length": 99
+        }
+      }
+    },
+    "my.Survey.PublishedQuestionnaire": {
+      "kind": "entity",
+      "elements": {
+        "QuestionnaireID": {
+          "@Core.Computed": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "QuestionnaireName": {
+          "type": "cds.String",
+          "length": 55,
+          "notNull": true
+        },
+        "Publish": {
+          "@assert.range": true,
+          "type": "my.Survey.PublishedQuestionnaire.Publish",
+          "length": 10
+        }
+      }
+    },
+    "my.Survey.ApprovalGroupParticipants": {
+      "kind": "entity",
+      "elements": {
+        "ApprovalGroup": {
+          "@Core.Computed": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 100
+        },
+        "UserID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 100
+        },
+        "UserMail": {
+          "type": "cds.String",
+          "length": 100
+        }
+      }
+    },
+    "my.Survey.QuestionnaireApprovalGroups": {
+      "kind": "entity",
+      "elements": {
+        "QuestionnaireID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "QuestionnaireName": {
+          "@Core.Computed": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 55
+        },
+        "ApprovalGroup": {
+          "key": true,
+          "type": "cds.String",
+          "length": 100
+        },
+        "AllApprovalsRequired": {
+          "@assert.range": true,
+          "type": "my.Survey.QuestionnaireApprovalGroups.AllApprovalsRequired",
+          "length": 10
+        }
+      }
+    },
+    "my.Survey.CustomSelectAnswers": {
+      "kind": "entity",
+      "elements": {
+        "QuestionnaireID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "QuestionID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "AnswerID": {
+          "type": "cds.String"
+        },
+        "Answer": {
+          "type": "cds.String"
+        }
+      }
+    },
+    "my.Survey.AssessmentRequests": {
+      "kind": "entity",
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.Integer"
+        },
+        "ProjectTitle": {
+          "type": "cds.String",
+          "length": 100,
+          "notNull": true
+        },
+        "Commodity": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "my.Survey.CommodityMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "UniqueName"
+              ]
+            }
+          ]
+        },
+        "Region": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "my.Survey.RegionMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "Region"
+              ]
+            }
+          ]
+        },
+        "Department": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "my.Survey.DepartmentMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "DepartmentID"
+              ]
+            }
+          ]
+        },
+        "Supplier": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "my.Survey.SupplierUserMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "erpVendorId"
+              ]
+            }
+          ]
+        },
+        "Deadline": {
+          "type": "cds.Date"
+        },
+        "QuestionnaireID": {
+          "type": "cds.String",
+          "length": 50
+        },
+        "RequestorID": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "RequestorName": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "ResponderUserType": {
+          "@assert.range": true,
+          "type": "my.Survey.AssessmentRequests.ResponderUserType",
+          "length": 10
+        },
+        "ResponderUserID": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "ResponderUserName": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "ResponderEmail": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "Project_Status": {
+          "@assert.range": true,
+          "type": "my.Survey.AssessmentRequests.Project_Status",
+          "length": 50
+        }
+      }
+    },
+    "my.Survey.RoleCollection": {
+      "kind": "entity",
+      "elements": {
+        "RoleID": {
+          "@Core.Computed": true,
+          "key": true,
+          "type": "cds.Integer"
+        },
+        "UserType": {
+          "type": "cds.String",
+          "length": 10,
+          "notNull": true
+        },
+        "RoleDescription": {
+          "type": "cds.String",
+          "length": 50
+        },
+        "BTPRoleCollectionName": {
+          "type": "cds.String",
+          "length": 50,
+          "notNull": true
+        }
+      }
+    },
+    "my.Survey.SupplierUserMasterTable": {
+      "kind": "entity",
+      "elements": {
+        "erpVendorId": {
+          "key": true,
+          "type": "cds.String",
+          "length": 40
+        },
+        "smVendorId": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "masterVendorId": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "sourceSystem": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "name1": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "name2": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "name3": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "name4": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "phone": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "fax": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "line1": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "line2": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "line3": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "postalCode": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "poBox": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "city": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "state": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "stateName": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "countryCode": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "taxIdentificationNumberTypeCode": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "partyTaxID": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "longPartyTaxID": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "dunsId": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "active": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "s4OrgSystemId": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "firstName": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "middleName": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "lastName": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "telephone": {
+          "type": "cds.Integer"
+        },
+        "mobileCountryCode": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "mobilePhone": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "email": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "type": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "locale": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "title": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "categories": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "regions": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "timeZoneID": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "isPrimary": {
+          "type": "cds.String",
+          "length": 100
+        }
+      }
+    },
+    "my.Survey.InternalUserMasterTable": {
+      "kind": "entity",
+      "elements": {
+        "LoginID": {
+          "@Core.Computed": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 100
+        },
+        "firstName": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "lastName": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "creationDate": {
+          "type": "cds.Date"
+        },
+        "emailAddress": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "phone": {
+          "type": "cds.String",
+          "length": 15
+        },
+        "departmentId": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "position": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "UserType": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "SupplierID": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "my.Survey.SupplierUserMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "erpVendorId"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "my.Survey.ResponseDetails": {
+      "kind": "entity",
+      "elements": {
+        "ProjectID": {
+          "key": true,
+          "type": "cds.Integer"
+        },
+        "ProjectTitle": {
+          "key": true,
+          "type": "cds.String",
+          "length": 100
+        },
+        "QuestionnaireID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "QuestionID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "Question": {
+          "type": "cds.String",
+          "length": 50
+        },
+        "AnswerID": {
+          "type": "cds.String"
+        },
+        "Response": {
+          "type": "cds.String",
+          "length": 500
+        }
+      }
+    },
+    "my.Survey.ApproverDetails": {
+      "kind": "entity",
+      "elements": {
+        "ProjectID": {
+          "key": true,
+          "type": "cds.Integer"
+        },
+        "QuestionnaireID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "UserID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 100
+        },
+        "ApprovalStatus": {
+          "@assert.range": true,
+          "type": "my.Survey.ApproverDetails.ApprovalStatus",
+          "length": 100
+        }
+      }
+    },
+    "my.Survey.ApproverGrading": {
+      "kind": "entity",
+      "elements": {
+        "ProjectID": {
+          "key": true,
+          "type": "cds.Integer"
+        },
+        "QuestionnaireID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "QuestionID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "Question": {
+          "type": "cds.String",
+          "length": 50
+        },
+        "AnswerID": {
+          "type": "cds.String"
+        },
+        "Response": {
+          "type": "cds.String",
+          "length": 500
+        },
+        "ApproverID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "Grade": {
+          "type": "cds.Integer"
+        }
+      }
+    },
+    "my.Survey.Test": {
+      "kind": "entity",
+      "elements": {
+        "ID": {
+          "@Core.Computed": true,
+          "key": true,
+          "type": "cds.Double"
+        }
+      }
+    },
+    "my.Survey.ApproverDetails.ApprovalStatus": {
+      "kind": "type",
+      "@assert.range": true,
+      "type": "cds.String",
+      "length": 100,
+      "enum": {
+        "Open": {},
+        "Closed": {}
+      }
+    },
+    "my.Survey.AssessmentRequests.Project_Status": {
+      "kind": "type",
+      "@assert.range": true,
+      "type": "cds.String",
+      "length": 50,
+      "enum": {
+        "Open": {},
+        "OpenWithSupplier": {},
+        "OpenWithApprover": {},
+        "Closed": {}
+      }
+    },
+    "my.Survey.AssessmentRequests.ResponderUserType": {
+      "kind": "type",
+      "@assert.range": true,
+      "type": "cds.String",
+      "length": 10,
+      "enum": {
+        "Internal": {},
+        "Supplier": {}
+      }
+    },
+    "my.Survey.PublishedQuestionnaire.Publish": {
+      "kind": "type",
+      "@assert.range": true,
+      "type": "cds.String",
+      "length": 10,
+      "enum": {
+        "Yes": {},
+        "No": {}
+      }
+    },
+    "my.Survey.QuestionnaireApprovalGroups.AllApprovalsRequired": {
+      "kind": "type",
+      "@assert.range": true,
+      "type": "cds.String",
+      "length": 10,
+      "enum": {
+        "Yes": {},
+        "No": {}
+      }
+    },
+    "CatalogService": {
+      "@source": "srv/cat-service.cds",
+      "kind": "service"
+    },
+    "CatalogService.Workflow": {
+      "kind": "entity",
+      "projection": {
+        "from": {
+          "ref": [
+            "my.Survey.Workflow"
+          ]
+        }
+      },
+      "elements": {
+        "project_ID": {
+          "key": true,
+          "type": "cds.Integer"
+        },
+        "workflow_ID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        }
+      }
+    },
+    "CatalogService.RegionMasterTable": {
+      "kind": "entity",
+      "projection": {
+        "from": {
+          "ref": [
+            "my.Survey.RegionMasterTable"
+          ]
+        }
+      },
+      "elements": {
+        "Region": {
+          "@Core.Computed": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "Description": {
+          "type": "cds.String",
+          "length": 510,
+          "notNull": true
+        },
+        "ParentRegion": {
+          "type": "cds.String",
+          "length": 50
+        }
+      }
+    },
+    "CatalogService.DepartmentMasterTable": {
+      "kind": "entity",
+      "projection": {
+        "from": {
+          "ref": [
+            "my.Survey.DepartmentMasterTable"
+          ]
+        }
+      },
+      "elements": {
+        "DepartmentID": {
+          "@Core.Computed": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "Description": {
+          "type": "cds.String",
+          "length": 510,
+          "notNull": true
+        },
+        "ParentDepartment": {
+          "type": "cds.String",
+          "length": 50
+        }
+      }
+    },
+    "CatalogService.CommodityMasterTable": {
+      "kind": "entity",
+      "projection": {
+        "from": {
+          "ref": [
+            "my.Survey.CommodityMasterTable"
+          ]
+        }
+      },
+      "elements": {
+        "Domain": {
+          "type": "cds.String",
+          "length": 50,
+          "notNull": true
+        },
+        "UniqueName": {
+          "key": true,
+          "type": "cds.String",
+          "length": 100
+        },
+        "Name": {
+          "type": "cds.String",
+          "length": 255,
+          "notNull": true
+        },
+        "ParentUniqueName": {
+          "type": "cds.String",
+          "length": 100
+        }
+      }
+    },
+    "CatalogService.RiskControlMasterTable": {
+      "kind": "entity",
+      "projection": {
+        "from": {
+          "ref": [
+            "my.Survey.RiskControlMasterTable"
+          ]
+        }
+      },
+      "elements": {
+        "AssessmentIDs": {
+          "type": "cds.String",
+          "length": 100,
+          "notNull": true
+        },
+        "ContractClauseImpact": {
+          "type": "cds.String",
+          "length": 100,
+          "notNull": true
+        },
+        "ControlDescriptionMLS": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "ControlID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 100
+        },
+        "ControlName": {
+          "type": "cds.String",
+          "length": 100,
+          "notNull": true
+        },
+        "ControlOwner": {
+          "type": "cds.String",
+          "length": 100,
+          "notNull": true
+        },
+        "ControlOwnerType": {
+          "type": "cds.String",
+          "length": 100,
+          "notNull": true
+        },
+        "ControlType": {
+          "type": "cds.String",
+          "length": 100,
+          "notNull": true
+        },
+        "DecisionMaker": {
+          "type": "cds.String",
+          "length": 100,
+          "notNull": true
+        },
+        "DecisionMakerType": {
+          "type": "cds.String",
+          "length": 100,
+          "notNull": true
+        },
+        "RegulatorMandated": {
+          "type": "cds.String",
+          "length": 100,
+          "notNull": true
+        },
+        "RiskType": {
+          "type": "cds.String",
+          "length": 100,
+          "notNull": true
+        }
+      }
+    },
+    "CatalogService.AssessmentQuestionnaireTable": {
+      "kind": "entity",
+      "projection": {
+        "from": {
+          "ref": [
+            "my.Survey.AssessmentQuestionnaireTable"
+          ]
+        }
+      },
+      "elements": {
+        "QuestionnaireID": {
+          "@Core.Computed": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "RiskControlID": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "CatalogService.RiskControlMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "ControlID"
+              ]
+            }
+          ]
+        },
+        "QuestionnaireName": {
+          "key": true,
+          "type": "cds.String",
+          "length": 55
+        },
+        "QuestionID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "Commodity": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "CatalogService.CommodityMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "UniqueName"
+              ]
+            }
+          ]
+        },
+        "Region": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "CatalogService.RegionMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "Region"
+              ]
+            }
+          ]
+        },
+        "Department": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "CatalogService.DepartmentMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "DepartmentID"
+              ]
+            }
+          ]
+        },
+        "Questions": {
+          "type": "cds.String",
+          "length": 500,
+          "notNull": true
+        },
+        "ScoringWeightage": {
+          "type": "cds.Integer",
+          "notNull": true
+        },
+        "AnswerID": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "CatalogService.AnswerTypeMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "AnswerID"
+              ]
+            },
+            {
+              "ref": [
+                "AnswerType"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "CatalogService.AnswerTypeMasterTable": {
+      "kind": "entity",
+      "projection": {
+        "from": {
+          "ref": [
+            "my.Survey.AnswerTypeMasterTable"
+          ]
+        }
+      },
+      "elements": {
+        "AnswerID": {
+          "@Core.Computed": true,
+          "key": true,
+          "type": "cds.String"
+        },
+        "AnswerType": {
+          "key": true,
+          "type": "cds.String",
+          "length": 99
+        }
+      }
+    },
+    "CatalogService.PublishedQuestionnaire": {
+      "kind": "entity",
+      "projection": {
+        "from": {
+          "ref": [
+            "my.Survey.PublishedQuestionnaire"
+          ]
+        }
+      },
+      "elements": {
+        "QuestionnaireID": {
+          "@Core.Computed": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "QuestionnaireName": {
+          "type": "cds.String",
+          "length": 55,
+          "notNull": true
+        },
+        "Publish": {
+          "@assert.range": true,
+          "type": "my.Survey.PublishedQuestionnaire.Publish",
+          "length": 10
+        }
+      }
+    },
+    "CatalogService.QuestionnaireApprovalGroups": {
+      "kind": "entity",
+      "projection": {
+        "from": {
+          "ref": [
+            "my.Survey.QuestionnaireApprovalGroups"
+          ]
+        }
+      },
+      "elements": {
+        "QuestionnaireID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "QuestionnaireName": {
+          "@Core.Computed": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 55
+        },
+        "ApprovalGroup": {
+          "key": true,
+          "type": "cds.String",
+          "length": 100
+        },
+        "AllApprovalsRequired": {
+          "@assert.range": true,
+          "type": "my.Survey.QuestionnaireApprovalGroups.AllApprovalsRequired",
+          "length": 10
+        }
+      }
+    },
+    "CatalogService.ApprovalGroupParticipants": {
+      "kind": "entity",
+      "projection": {
+        "from": {
+          "ref": [
+            "my.Survey.ApprovalGroupParticipants"
+          ]
+        }
+      },
+      "elements": {
+        "ApprovalGroup": {
+          "@Core.Computed": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 100
+        },
+        "UserID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 100
+        },
+        "UserMail": {
+          "type": "cds.String",
+          "length": 100
+        }
+      }
+    },
+    "CatalogService.CustomSelectAnswers": {
+      "kind": "entity",
+      "projection": {
+        "from": {
+          "ref": [
+            "my.Survey.CustomSelectAnswers"
+          ]
+        }
+      },
+      "elements": {
+        "QuestionnaireID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "QuestionID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "AnswerID": {
+          "type": "cds.String"
+        },
+        "Answer": {
+          "type": "cds.String"
+        }
+      }
+    },
+    "CatalogService.Parent_Region": {
+      "kind": "entity",
+      "projection": {
+        "from": {
+          "ref": [
+            "my.Survey.Parent_Region"
+          ]
+        }
+      },
+      "elements": {
+        "ParentRegion": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        }
+      }
+    },
+    "CatalogService.Parent_Department": {
+      "kind": "entity",
+      "projection": {
+        "from": {
+          "ref": [
+            "my.Survey.Parent_Department"
+          ]
+        }
+      },
+      "elements": {
+        "ParentDepartment": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        }
+      }
+    },
+    "CatalogService.Parent_Commodity": {
+      "kind": "entity",
+      "projection": {
+        "from": {
+          "ref": [
+            "my.Survey.Parent_Commodity"
+          ]
+        }
+      },
+      "elements": {
+        "ParentUniqueName": {
+          "key": true,
+          "type": "cds.String",
+          "length": 100
+        }
+      }
+    },
+    "CatalogService.AssessmentRequests": {
+      "kind": "entity",
+      "projection": {
+        "from": {
+          "ref": [
+            "my.Survey.AssessmentRequests"
+          ]
+        }
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.Integer"
+        },
+        "ProjectTitle": {
+          "type": "cds.String",
+          "length": 100,
+          "notNull": true
+        },
+        "Commodity": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "CatalogService.CommodityMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "UniqueName"
+              ]
+            }
+          ]
+        },
+        "Region": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "CatalogService.RegionMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "Region"
+              ]
+            }
+          ]
+        },
+        "Department": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "CatalogService.DepartmentMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "DepartmentID"
+              ]
+            }
+          ]
+        },
+        "Supplier": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "CatalogService.SupplierUserMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "erpVendorId"
+              ]
+            }
+          ]
+        },
+        "Deadline": {
+          "type": "cds.Date"
+        },
+        "QuestionnaireID": {
+          "type": "cds.String",
+          "length": 50
+        },
+        "RequestorID": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "RequestorName": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "ResponderUserType": {
+          "@assert.range": true,
+          "type": "my.Survey.AssessmentRequests.ResponderUserType",
+          "length": 10
+        },
+        "ResponderUserID": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "ResponderUserName": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "ResponderEmail": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "Project_Status": {
+          "@assert.range": true,
+          "type": "my.Survey.AssessmentRequests.Project_Status",
+          "length": 50
+        }
+      }
+    },
+    "CatalogService.ResponseDetails": {
+      "kind": "entity",
+      "projection": {
+        "from": {
+          "ref": [
+            "my.Survey.ResponseDetails"
+          ]
+        }
+      },
+      "elements": {
+        "ProjectID": {
+          "key": true,
+          "type": "cds.Integer"
+        },
+        "ProjectTitle": {
+          "key": true,
+          "type": "cds.String",
+          "length": 100
+        },
+        "QuestionnaireID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "QuestionID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "Question": {
+          "type": "cds.String",
+          "length": 50
+        },
+        "AnswerID": {
+          "type": "cds.String"
+        },
+        "Response": {
+          "type": "cds.String",
+          "length": 500
+        }
+      }
+    },
+    "CatalogService.ApproverGrading": {
+      "kind": "entity",
+      "projection": {
+        "from": {
+          "ref": [
+            "my.Survey.ApproverGrading"
+          ]
+        }
+      },
+      "elements": {
+        "ProjectID": {
+          "key": true,
+          "type": "cds.Integer"
+        },
+        "QuestionnaireID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "QuestionID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "Question": {
+          "type": "cds.String",
+          "length": 50
+        },
+        "AnswerID": {
+          "type": "cds.String"
+        },
+        "Response": {
+          "type": "cds.String",
+          "length": 500
+        },
+        "ApproverID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "Grade": {
+          "type": "cds.Integer"
+        }
+      }
+    },
+    "CatalogService.ApproverDetails": {
+      "kind": "entity",
+      "projection": {
+        "from": {
+          "ref": [
+            "my.Survey.ApproverDetails"
+          ]
+        }
+      },
+      "elements": {
+        "ProjectID": {
+          "key": true,
+          "type": "cds.Integer"
+        },
+        "QuestionnaireID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "UserID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 100
+        },
+        "ApprovalStatus": {
+          "@assert.range": true,
+          "type": "my.Survey.ApproverDetails.ApprovalStatus",
+          "length": 100
+        }
+      }
+    },
+    "CatalogService.SupplierUserMasterTable": {
+      "kind": "entity",
+      "projection": {
+        "from": {
+          "ref": [
+            "my.Survey.SupplierUserMasterTable"
+          ]
+        }
+      },
+      "elements": {
+        "erpVendorId": {
+          "key": true,
+          "type": "cds.String",
+          "length": 40
+        },
+        "smVendorId": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "masterVendorId": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "sourceSystem": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "name1": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "name2": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "name3": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "name4": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "phone": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "fax": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "line1": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "line2": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "line3": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "postalCode": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "poBox": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "city": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "state": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "stateName": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "countryCode": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "taxIdentificationNumberTypeCode": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "partyTaxID": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "longPartyTaxID": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "dunsId": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "active": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "s4OrgSystemId": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "firstName": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "middleName": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "lastName": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "telephone": {
+          "type": "cds.Integer"
+        },
+        "mobileCountryCode": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "mobilePhone": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "email": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "type": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "locale": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "title": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "categories": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "regions": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "timeZoneID": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "isPrimary": {
+          "type": "cds.String",
+          "length": 100
+        }
+      }
+    },
+    "CatalogService.InternalUserMasterTable": {
+      "kind": "entity",
+      "projection": {
+        "from": {
+          "ref": [
+            "my.Survey.InternalUserMasterTable"
+          ]
+        }
+      },
+      "elements": {
+        "LoginID": {
+          "@Core.Computed": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 100
+        },
+        "firstName": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "lastName": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "creationDate": {
+          "type": "cds.Date"
+        },
+        "emailAddress": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "phone": {
+          "type": "cds.String",
+          "length": 15
+        },
+        "departmentId": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "position": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "UserType": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "SupplierID": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "CatalogService.SupplierUserMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "erpVendorId"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "CatalogService.ProjectApprovalGroupParticipants": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "my.Views.ProjectApprovalGroupParticipants"
+            ]
+          }
+        }
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.Integer"
+        },
+        "QuestionnaireID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "ApprovalGroup": {
+          "@Core.Computed": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 100
+        },
+        "UserID": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "UserMail": {
+          "type": "cds.String",
+          "length": 100
+        }
+      }
+    },
+    "CatalogService.Graders": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "my.Views.Graders"
+            ]
+          }
+        }
+      },
+      "elements": {
+        "ID": {
+          "type": "cds.Integer"
+        },
+        "LoginID": {
+          "@Core.Computed": true,
+          "type": "cds.String",
+          "length": 100
+        },
+        "UserMail": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "firstName": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "lastName": {
+          "type": "cds.String",
+          "length": 100
+        }
+      }
+    },
+    "CatalogService.Grading": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "my.Views.Grading"
+            ]
+          }
+        }
+      },
+      "elements": {
+        "ProjectID": {
+          "key": true,
+          "type": "cds.Integer"
+        },
+        "QuestionnaireID": {
+          "type": "cds.String",
+          "length": 50
+        },
+        "QuestionID": {
+          "type": "cds.String",
+          "length": 50
+        },
+        "Question": {
+          "type": "cds.String",
+          "length": 50
+        },
+        "AnswerID": {
+          "type": "cds.String"
+        },
+        "Response": {
+          "type": "cds.String",
+          "length": 500
+        },
+        "Grade": {
+          "type": "cds.Integer"
+        },
+        "ApproverID": {
+          "type": "cds.String",
+          "length": 50
+        },
+        "ScoringWeightage": {
+          "type": "cds.Integer",
+          "notNull": true
+        },
+        "Multiplication": {
+          "@Core.Computed": true,
+          "type": "cds.Integer"
+        }
+      }
+    },
+    "CatalogService.ApproverFinalGradingScore": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "my.Views.ApproverFinalGradingScore"
+            ]
+          }
+        }
+      },
+      "elements": {
+        "ProjectID": {
+          "key": true,
+          "type": "cds.Integer"
+        },
+        "ApproverID": {
+          "type": "cds.String",
+          "length": 50
+        },
+        "Score": {
+          "@Core.Computed": true,
+          "type": "cds.Integer"
+        }
+      }
+    },
+    "CatalogService.ProjectFinalGradingScore": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "my.Views.ProjectFinalGradingScore"
+            ]
+          }
+        }
+      },
+      "elements": {
+        "ProjectID": {
+          "key": true,
+          "type": "cds.Integer"
+        },
+        "FinalScore": {
+          "@Core.Computed": true,
+          "type": "cds.Integer"
+        }
+      }
+    },
+    "CatalogService.ApprovalGroups": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "my.Views.ApprovalGroups"
+            ]
+          }
+        }
+      },
+      "elements": {
+        "ApprovalGroup": {
+          "@Core.Computed": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 100
+        }
+      }
+    },
+    "CatalogService.QuestionnaireID": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "my.Views.QuestionnaireID"
+            ]
+          }
+        }
+      },
+      "elements": {
+        "QuestionnaireID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "Commodity": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "CatalogService.CommodityMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "UniqueName"
+              ]
+            }
+          ]
+        },
+        "Region": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "CatalogService.RegionMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "Region"
+              ]
+            }
+          ]
+        },
+        "Department": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "CatalogService.DepartmentMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "DepartmentID"
+              ]
+            }
+          ]
+        },
+        "QuestionID": {
+          "type": "cds.String",
+          "length": 50
+        },
+        "Questions": {
+          "type": "cds.String",
+          "length": 500,
+          "notNull": true
+        }
+      }
+    },
+    "CatalogService.ApproverStatus": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "my.Views.ApproverStatus"
+            ]
+          }
+        }
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.Integer"
+        },
+        "UserID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 100
+        },
+        "Status": {
+          "@Core.Computed": true,
+          "type": "cds.String"
+        }
+      }
+    },
+    "CatalogService.FinalQuestionnaireID": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "my.Views.FinalQuestionnaireID"
+            ]
+          }
+        }
+      },
+      "elements": {
+        "QuestionnaireID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "Commodity": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "CatalogService.CommodityMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "UniqueName"
+              ]
+            }
+          ]
+        },
+        "Region": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "CatalogService.RegionMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "Region"
+              ]
+            }
+          ]
+        },
+        "Department": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "CatalogService.DepartmentMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "DepartmentID"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "CatalogService.OpenAssessmentRequest": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "my.Views.OpenAssessmentRequest"
+            ]
+          }
+        }
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.Integer"
+        }
+      }
+    },
+    "CatalogService.AssessmentRequestStatus": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "my.Views.AssessmentRequestStatus"
+            ]
+          }
+        }
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.Integer"
+        },
+        "ProjectTitle": {
+          "key": true,
+          "type": "cds.String",
+          "length": 100,
+          "notNull": true
+        },
+        "UserID": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "Commodity": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "CatalogService.CommodityMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "UniqueName"
+              ]
+            }
+          ]
+        },
+        "Department": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "CatalogService.DepartmentMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "DepartmentID"
+              ]
+            }
+          ]
+        },
+        "Deadline": {
+          "type": "cds.Date"
+        },
+        "QuestionnaireID": {
+          "type": "cds.String",
+          "length": 50
+        },
+        "Region": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "CatalogService.RegionMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "Region"
+              ]
+            }
+          ]
+        },
+        "RequestorName": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "ResponderUserID": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "ResponderUserType": {
+          "@assert.range": true,
+          "type": "my.Survey.AssessmentRequests.ResponderUserType",
+          "length": 10
+        },
+        "Supplier": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "CatalogService.SupplierUserMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "erpVendorId"
+              ]
+            }
+          ]
+        },
+        "Project_Status": {
+          "@Core.Computed": true,
+          "type": "cds.String"
+        }
+      }
+    },
+    "CatalogService.UserDetails": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "my.Views.UserDetails"
+            ]
+          }
+        }
+      },
+      "elements": {
+        "LoginID": {
+          "@Core.Computed": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 100
+        },
+        "fullName": {
+          "@Core.Computed": true,
+          "type": "cds.String"
+        },
+        "UserType": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "creationDate": {
+          "type": "cds.Date"
+        },
+        "emailAddress": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "phone": {
+          "type": "cds.String",
+          "length": 15
+        },
+        "departmentId": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "position": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "SupplierID": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "CatalogService.SupplierUserMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "erpVendorId"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "CatalogService.OOTBReport": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "my.Views.OOTBReport"
+            ]
+          }
+        }
+      },
+      "elements": {
+        "ProjectID": {
+          "key": true,
+          "type": "cds.Integer"
+        },
+        "ProjectTitle": {
+          "type": "cds.String",
+          "length": 100,
+          "notNull": true
+        },
+        "RequestorName": {
+          "type": "cds.String",
+          "length": 100
+        },
+        "SupplierName": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "CatalogService.SupplierUserMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "erpVendorId"
+              ]
+            }
+          ]
+        },
+        "Date": {
+          "type": "cds.Date"
+        },
+        "Category": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "CatalogService.CommodityMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "UniqueName"
+              ]
+            }
+          ]
+        },
+        "Region": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "CatalogService.RegionMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "Region"
+              ]
+            }
+          ]
+        },
+        "Department": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "CatalogService.DepartmentMasterTable",
+          "keys": [
+            {
+              "ref": [
+                "DepartmentID"
+              ]
+            }
+          ]
+        },
+        "RiskControl": {
+          "@Core.Computed": true,
+          "type": "cds.String"
+        },
+        "RiskControlScore": {
+          "@Core.Computed": true,
+          "type": "cds.Integer"
+        }
+      }
+    },
+    "CatalogService.getdate": {
+      "kind": "function",
+      "returns": {
+        "type": "cds.Date"
+      }
+    },
+    "CatalogService.submitpublishquestionnaire": {
+      "kind": "function",
+      "params": {
+        "payloaddata": {
+          "items": {
+            "type": "CatalogService.PublishedQuestionnaire"
+          }
+        }
+      },
+      "returns": {
+        "type": "cds.String"
+      }
+    }
+  },
+  "meta": {
+    "creator": "CDS Compiler v2.5.2",
+    "flavor": "inferred"
+  },
+  "$version": "2.0"
+}

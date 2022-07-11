@@ -1,0 +1,11 @@
+# auto generated wildcard
+gen/db/.env
+
+# added by cds deploy
+default-env.json
+
+# auto generated wildcard
+SupplierEngagementSurvey/gen/db/.env
+# auto generated wildcard
+Test_CAPM/gen/db/.env
+node_modules
